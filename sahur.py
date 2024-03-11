@@ -26,7 +26,7 @@ async def iftar_handler(event):
     response = requests.get(imsakiye_url)
     soup = BeautifulSoup(response.text, 'html.parser')
     
-    iftar_time = soup.find('div', class_='İftar Saati').text
+    iftar_time = soup.find('div', class_='İftar-Saati').text
     await event.reply(f"Iftar saati {iftar_time}")
 
 client.start(bot_token=bot_token)
