@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 from telethon import TelegramClient, events
 import requests
 import datetime, pytz
-import sahuraKalan, iftaraKalan
 
 api_id = '21119132'
 api_hash = 'c0a90d0ba66e6bdea356894a55f4856e'
