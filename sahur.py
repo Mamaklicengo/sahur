@@ -18,12 +18,12 @@ city_ids = {
 from pyrogram import Client, filters
 import requests
 
-api_url = "https://www.fazilettakvimi.com/api/imsakiye/index/{city_id}"
+api_url = "https://www.fazilettakvimi.com/api/imsakiye/index/"
 
 app = Client("my_bot", api_id=21119132, api_hash="c0a90d0ba66e6bdea356894a55f4856e", bot_token="6531499751:AAGHzxki3QsflZqnh3wnk_1qF-yZE5YJxtw")
 
 def get_prayer_times(city_id):
-    response = requests.get(f"{api_url}")
+    response = requests.get(f"{api_url}{city_id}")
     data = response.json()
     return data
 
@@ -49,4 +49,4 @@ def iftar_command(client, message):
     else:
         client.send_message(message.chat.id, "Geçersiz şehir adı")
 
-     app.run()
+app.run()
