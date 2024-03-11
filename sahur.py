@@ -144,4 +144,4 @@ def sahur(client, message):
         kekik.edit(mesaj, disable_web_page_preview=True, parse_mode="Markdown")
     except Exception as hata_mesaji:
         kekik.edit(hata_mesaji)
-      client.run()
+      Client.run()
