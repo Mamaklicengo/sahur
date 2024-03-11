@@ -1,7 +1,7 @@
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
-from telethon import TelegramClient, events
+from telethon import TelegramClient, events, Filters
 
 api_id = 'YOUR_API_ID'
 api_hash = 'YOUR_API_HASH'
