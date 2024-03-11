@@ -1,52 +1,37 @@
-city_ids = {
-    'Artvin': 1, 'Aydın': 2, 'Balıkesir': 3, 'Bartın': 4, 'Batman': 5, 'Bayburt': 6,
-    'Bilecik': 7, 'Bingöl': 8, 'Bitlis': 9, 'Bolu': 10, 'Burdur': 11, 'Bursa': 12,
-    'Çanakkale': 13, 'Çankırı': 14, 'Çorum': 15, 'Denizli': 16, 'Diyarbakır': 17,
-    'Düzce': 18, 'Edirne': 19, 'Elazığ': 20, 'Erzincan': 21, 'Erzurum': 22, 'Eskişehir': 23,
-    'Gaziantep': 24, 'Giresun': 25, 'Gümüşhane': 26, 'Hakkari': 27, 'Hatay': 28, 'Iğdır': 29,
-    'Isparta': 30, 'İstanbul': 31, 'İzmir': 32, 'Kocaeli': 33, 'Kahramanmaraş': 34,
-    'Karabük': 35, 'Karaman': 36, 'Kars': 37, 'Kastamonu': 38, 'Kayseri': 39, 'Kırıkkale': 40,
-    'Kırklareli': 41, 'Kırşehir': 42, 'Kilis': 43, 'Konya': 44, 'Kütahya': 45, 'Malatya': 46,
-    'Manisa': 47, 'Mardin': 48, 'Mersin': 49, 'Muğla': 50, 'Muş': 51, 'Nevşehir': 52,
-    'Niğde': 53, 'Ordu': 54, 'Osmaniye': 55, 'Rize': 56, 'Samsun': 57, 'Siirt': 58,
-    'Sinop': 59, 'Sivas': 60,'Şanlıurfa': 61, 'Şırnak': 62, 'Tekirdağ': 63, 'Tokat': 64,
-    'Trabzon': 65, 'Tunceli': 66,'Uşak': 67,'Van':68,'Yalova':69,'Yozgat':70,'Zonguldak':71,
-    'Adana':72,'Sakarya':73,'Adıyaman':74,'Afyonkarahisar' :75,'Ağrı' :76,'Aksaray' :77,
-    'Amasya' :78,'Ankara' :79,'Antalya' :80,'Ardahan' :81
-}
-
-from pyrogram import Client, filters
+from telethon import TelegramClient, events
 import requests
+from bs4 import BeautifulSoup
+import datetime
 
-api_url = "https://www.fazilettakvimi.com/api/imsakiye/index/{city_id}"
+bot_token = '6531499751:AAGHzxki3QsflZqnh3wnk_1qF-yZE5YJxtw' # Bot Tokeni
+api_id = '21119132' # Api ID
+api_hash = 'c0a90d0ba66e6bdea356894a55f4856e' # Api Hash
 
-app = Client("my_bot", api_id=21119132, api_hash="c0a90d0ba66e6bdea356894a55f4856e", bot_token="6531499751:AAGHzxki3QsflZqnh3wnk_1qF-yZE5YJxtw")
+bot = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
-def get_prayer_times(city_id):
-    response = requests.get(f"{api_url}{city_id}")
-    data = response.json()
-    return data
+@bot.on(events.NewMessage(pattern='/start'))
+async def start(event):
+    await event.respond('👋 Merhaba ben Telegramın eğlence botuyum\n\n İşte sana yapabildiğim herşeyi tek tek yazıyorum🤭\n\nBurç yorumu için yorumunu almak istediğiniz burcu başına / koyarak yazın örnek: /burc Koc\n\nEros aşkın oku /ask komutu ile grubundaki iki kişiyi birbirine shipler🏹👩‍❤️‍👨\n\nSayı tahmin oyunu komutu /sayi oyunu durdurmak için /tahminbitir komutlarını kullanabilirsiniz🔢\n\ndoğruluk ve cesaretlilik sorusu alabilirsiniz\n komutlar: \n/d = doğruluk sorusu sorar.\n/c = Cesaret sorusu sorar.\n\nEğer bir sorun oluşursa 👨‍💻 @yoodelidegilim kişisi ile iletişime geçebilirsiniz📞\n\nDiğer botlarımız için kanalımızı ziyaret edebilirsiniz ⚙ @Mamaklibots')
 
-@app.on_message(filters.command(["sahur"]))
-def sahur_command(client, message):
-    city_name = message.text.split(" ")[1]
-    city_id = city_ids.get(city_name)
-    if city_id:
-        prayer_times = get_prayer_times(city_id)
-        sahur_time = prayer_times["Imsak"]
-        client.send_message(message.chat.id, f"Sahur vakti {sahur_time}")
+@bot.on(events.NewMessage(pattern='/sahur'))
+async def get_horoscope(event):
+    burclar = ['1', '2', '3', '4', '5', '6', '7', '8', 'Yay', 'Oglak', 'Kova', 'Balik']
+    message = event.raw_text.split(' ')[1].lower()
+    if message.capitalize() in burclar:
+        await event.respond(get_horoscope(message))
     else:
-        client.send_message(message.chat.id, "Geçersiz şehir adı")
+        await event.respond('Geçerli bir burç giriniz.')
 
-@app.on_message(filters.command(["iftar"]))
-def iftar_command(client, message):
-    city_name = message.text.split(" ")[1]
-    city_id = city_ids.get(city_name)
-    if city_id:
-        prayer_times = get_prayer_times(city_id)
-        iftar_time = prayer_times["Iftar"]
-        client.send_message(message.chat.id, f"Iftar vakti {iftar_time}")
-    else:
-        client.send_message(message.chat.id, "Geçersiz şehir adı")
+def get_horoscope(burc):
+    url = f'https://www.fazilettakvimi.com/api/imsakiye/index/{burc.lower()}'
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    horoscope = soup.find(class_='detail-content-box')
+    date = datetime.date.today().strftime('%d.%m.%Y')
+    horoscope_text = horoscope.get_text()
+    message_lines = horoscope_text.split('\n')
+    selected_lines = message_lines[100:110]
+    selected_text = '\n'.join(selected_lines)
+    return f'{date} tarihli {burc.capitalize()} burcu yorumu:\n\n{selected_text}'
 
-app.run()
+bot.run_until_disconnected()
