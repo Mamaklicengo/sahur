@@ -90,7 +90,7 @@ iftaraKalan = lambda il : vakitHesabi('İftar', faziletAksam(il).split('|')[1], 
 
 #print(sahuraKalan('Niğde'))
 #print(iftaraKalan('Niğde'))
-@Client.on_message(Filters.command(['iftar'],['!','.','/']))
+@client.on_message(Filters.command(['iftar'],['!','.','/']))
 def iftar(client, message):
     cevaplanan_mesaj = message.reply_to_message
     if cevaplanan_mesaj is None:
@@ -117,7 +117,7 @@ def iftar(client, message):
     except Exception as hata_mesaji:
         kekik.edit(hata_mesaji)
 
-@Client.on_message(Filters.command(['sahur'],['!','.','/']))
+@client.on_message(Filters.command(['sahur'],['!','.','/']))
 def sahur(client, message):
     cevaplanan_mesaj = message.reply_to_message
     if cevaplanan_mesaj is None:
@@ -143,4 +143,4 @@ def sahur(client, message):
         kekik.edit(mesaj, disable_web_page_preview=True, parse_mode="Markdown")
     except Exception as hata_mesaji:
         kekik.edit(hata_mesaji)
-        Client.run()
+        client.run()
