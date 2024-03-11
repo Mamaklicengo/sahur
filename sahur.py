@@ -1,5 +1,3 @@
-#Tabii ki, verdiğiniz şehirlerin city_id değerlerini ekleyebilirim. İşte güncellenmiş Python kodu:
-
 city_ids = {
     'Artvin': 1, 'Aydın': 2, 'Balıkesir': 3, 'Bartın': 4, 'Batman': 5, 'Bayburt': 6,
     'Bilecik': 7, 'Bingöl': 8, 'Bitlis': 9, 'Bolu': 10, 'Burdur': 11, 'Bursa': 12,
@@ -20,7 +18,7 @@ city_ids = {
 from pyrogram import Client, filters
 import requests
 
-api_url = "https://www.fazilettakvimi.com/api/imsakiye/index/{city_ids}"
+api_url = "https://www.fazilettakvimi.com/api/imsakiye/index/"
 
 app = Client("my_bot", api_id=21119132, api_hash="c0a90d0ba66e6bdea356894a55f4856e", bot_token="6531499751:AAGHzxki3QsflZqnh3wnk_1qF-yZE5YJxtw")
 
@@ -52,8 +50,3 @@ def iftar_command(client, message):
         client.send_message(message.chat.id, "Geçersiz şehir adı")
 
 app.run()
-
-
-#Bu kodda city_ids adında bir sözlük oluşturarak şehir isimlerine karşılık gelen city_id değerlerini tanımladım. Artık kullanıcılar /sahur ve /iftar komutları ile şehir ismi verebilecekler ve bot bu isme karşılık gelen city_id değerini alarak ilgili şehrin sahur ve iftar saatlerini gösterecektir.
-
-#Yine değiştirmeniz gereken yerlerde kendi API bilgilerinizi ve bot tokeninizi eklemenizi unutmayın. Eğer başka bir yardıma ihtiyacınız varsa lütfen bana bildirin.
