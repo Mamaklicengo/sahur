@@ -29,24 +29,30 @@ def get_prayer_times(city_id):
 
 @app.on_message(filters.command(["sahur"]))
 def sahur_command(client, message):
-    city_name = message.text.split(" ")[1]
-    city_id = city_ids.get(city_name)
-    if city_id:
-        prayer_times = get_prayer_times(city_id)
-        sahur_time = prayer_times["Imsak"]
-        client.send_message(message.chat.id, f"Sahur vakti {sahur_time}")
+    if len(message.text.split(" ")) >= 2:
+        city_name = message.text.split(" ")[1]
+        city_id = city_ids.get(city_name)
+        if city_id:
+            prayer_times = get_prayer_times(city_id)
+            sahur_time = prayer_times["Imsak"]
+            client.send_message(message.chat.id, f"Sahur vakti {sahur_time}")
+        else:
+            client.send_message(message.chat.id, "Geçersiz şehir adı")
     else:
-        client.send_message(message.chat.id, "Geçersiz şehir adı")
+        client.send_message(message.chat.id, "Komut kullanımı: /sahur <şehir>")
 
 @app.on_message(filters.command(["iftar"]))
 def iftar_command(client, message):
-    city_name = message.text.split(" ")[1]
-    city_id = city_ids.get(city_name)
-    if city_id:
-        prayer_times = get_prayer_times(city_id)
-        iftar_time = prayer_times["Iftar"]
-        client.send_message(message.chat.id, f"Iftar vakti {iftar_time}")
+    if len(message.text.split(" ")) >= 2:
+        city_name = message.text.split(" ")[1]
+        city_id = city_ids.get(city_name)
+        if city_id:
+            prayer_times = get_prayer_times(city_id)
+            iftar_time = prayer_times["Iftar"]
+            client.send_message(message.chat.id, f"Iftar vakti {iftar_time}")
+        else:
+            client.send_message(message.chat.id, "Geçersiz şehir adı")
     else:
-        client.send_message(message.chat.id, "Geçersiz şehir adı")
+        client.send_message(message.chat.id, "Komut kullanımı: /iftar <şehir>")
 
 app.run()
