@@ -22,7 +22,7 @@ async def sahur_handler(event):
 @client.on(events.NewMessage(pattern='/iftar'))
 async def iftar_handler(event):
     il = event.raw_text.split('/iftar ')[1]
-    imsakiye_url = f'https://www.hurriyet.com.tr/ramazan/{il}-imsakiye/}'
+    imsakiye_url = f'https://www.hurriyet.com.tr/ramazan/{il}-imsakiye/'
     response = requests.get(imsakiye_url)
     soup = BeautifulSoup(response.text, 'html.parser')
     
