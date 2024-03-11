@@ -1,7 +1,7 @@
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
-from telethon import TelegramClient, events, Filters
+from telethon import TelegramClient, events
 import requests
 import datetime, pytz
 import sahuraKalan, iftaraKalan
