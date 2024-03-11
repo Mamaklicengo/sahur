@@ -13,9 +13,9 @@ bot = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
 async def start(event):
     await event.respond('👋 Merhaba ben Telegramın eğlence botuyum\n\n İşte sana yapabildiğim herşeyi tek tek yazıyorum🤭\n\nBurç yorumu için yorumunu almak istediğiniz burcu başına / koyarak yazın örnek: /burc Koc\n\nEros aşkın oku /ask komutu ile grubundaki iki kişiyi birbirine shipler🏹👩‍❤️‍👨\n\nSayı tahmin oyunu komutu /sayi oyunu durdurmak için /tahminbitir komutlarını kullanabilirsiniz🔢\n\ndoğruluk ve cesaretlilik sorusu alabilirsiniz\n komutlar: \n/d = doğruluk sorusu sorar.\n/c = Cesaret sorusu sorar.\n\nEğer bir sorun oluşursa 👨‍💻 @yoodelidegilim kişisi ile iletişime geçebilirsiniz📞\n\nDiğer botlarımız için kanalımızı ziyaret edebilirsiniz ⚙ @Mamaklibots')
 
-@bot.on(events.NewMessage(pattern='/burc'))
+@bot.on(events.NewMessage(pattern='/sahur'))
 async def get_horoscope(event):
-    burclar = ['Koc', 'Boga', 'Ikizler', 'Yengec', 'Aslan', 'Basak', 'Terazi', 'Akrep', 'Yay', 'Oglak', 'Kova', 'Balik']
+    burclar = ['Ankara', 'Boga', 'Ikizler', 'Yengec', 'Aslan', 'Basak', 'Terazi', 'Akrep', 'Yay', 'Oglak', 'Kova', 'Balik']
     message = event.raw_text.split(' ')[1].lower()
     if message.capitalize() in burclar:
         await event.respond(get_horoscope(message))
@@ -23,7 +23,7 @@ async def get_horoscope(event):
         await event.respond('Geçerli bir burç giriniz.')
 
 def get_horoscope(burc):
-    url = f'https://www.mynet.com/kadin/burclar-astroloji/{burc.lower()}-burcu-gunluk-yorumu.html'
+    url = f'https://www.mynet.com/ramazan/imsakiye/{burc.lower()}'
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
     horoscope = soup.find(class_='detail-content-box')
