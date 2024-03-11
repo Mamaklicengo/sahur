@@ -18,7 +18,7 @@ city_ids = {
 from pyrogram import Client, filters
 import requests
 
-api_url = "https://www.fazilettakvimi.com/api/imsakiye/index/"
+api_url = "https://www.fazilettakvimi.com/api/imsakiye/index/{city_id}"
 
 app = Client("my_bot", api_id=21119132, api_hash="c0a90d0ba66e6bdea356894a55f4856e", bot_token="6531499751:AAGHzxki3QsflZqnh3wnk_1qF-yZE5YJxtw")
 
