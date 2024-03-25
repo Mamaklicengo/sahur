@@ -26,22 +26,16 @@ def find_location(city):
     return sehirler.get(city.capitalize())
 
 def show_prayer_times(update, context):
-    if len(context.args) < 2:
-        update.message.reply_text("Lütfen bir şehir adı ve komutu belirtin. Örneğin: /namaz istanbul")
+    if len(context.args) < 1:
+        update.message.reply_text("Lütfen bir şehir adı belirtin. Örneğin: /sahur adana")
         return
 
     city = context.args[0]
-    command = context.args[1].lower()
-
-    if command not in ["sahur", "iftar", "ezan"]:
-        update.message.reply_text("Geçersiz komut. Lütfen 'sahur', 'iftar' veya 'ezan' komutlarını kullanın.")
-        return
-
-    location_code = find_location(city)
-    if not location_code:
+    if city.lower() not in sehirler:
         update.message.reply_text("Belirtilen şehir bulunamadı.")
         return
 
+    location_code = sehirler[city.lower()]
     prayer_times = get_prayer_times(location_code)
     if not prayer_times:
         update.message.reply_text("Namaz vakitleri alınamadı. Lütfen daha sonra tekrar deneyin.")
@@ -64,39 +58,39 @@ def show_prayer_times(update, context):
             saat = columns[1].text.strip()
             times[vakit] = saat
 
-    if command == "ezan":
-        message = f"**{city.capitalize()} Ezan Vakitleri**\n\n"
-        for vakit, saat in times.items():
-            message += f"{vakit}: {saat}\n"
+    if context.args[1].lower() == "sahur":
+        target_time = times.get("Sahur")
+        command = "sahur"
+    elif context.args[1].lower() == "iftar":
+        target_time = times.get("İftar")
+        command = "iftar"
     else:
-        target_time = None
-        if command == "sahur":
-            target_time = times.get("Sahur")
-        elif command == "iftar":
-            target_time = times.get("İftar")
+        update.message.reply_text("Geçersiz komut. Lütfen 'sahur' veya 'iftar' komutlarını kullanın.")
+        return
 
-        if not target_time:
-            update.message.reply_text(f"{city.capitalize()} için {command} vakiti bulunamadı.")
-            return
+    if not target_time:
+        update.message.reply_text(f"{city.capitalize()} için {command} vakiti bulunamadı.")
+        return
 
-        target_datetime = datetime.strptime(target_time, "%H:%M")
-        current_datetime = datetime.now()
-        if current_datetime > target_datetime:
-            target_datetime += timedelta(days=1)
+    target_datetime = datetime.strptime(target_time, "%H:%M")
+    current_datetime = datetime.now()
+    if current_datetime > target_datetime:
+        target_datetime += timedelta(days=1)
 
-        remaining_time = target_datetime - current_datetime
-        hours_left = remaining_time.seconds // 3600
-        minutes_left = (remaining_time.seconds % 3600) // 60
+    remaining_time = target_datetime - current_datetime
+    hours_left = remaining_time.seconds // 3600
+    minutes_left = (remaining_time.seconds % 3600) // 60
 
-        message = f"**{city.capitalize()} {command.capitalize()} Saati ve Kalan Süre**\n"
-        message += f"{target_time}: {hours_left} saat {minutes_left} dakika kaldı."
+    message = f"**{city.capitalize()} {command.capitalize()} Saati ve Kalan Süre**\n"
+    message += f"{target_time}: {hours_left} saat {minutes_left} dakika kaldı."
 
     update.message.reply_text(message)
 
 def main():
     updater = Updater("6704245576:AAGqYQrMMuH2yt2sHJ9Zhk7q2wtNrDA_Eow", use_context=True)
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler("namaz", show_prayer_times))
+    dp.add_handler(CommandHandler("sahur", show_prayer_times, pass_args=True))
+    dp.add_handler(CommandHandler("iftar", show_prayer_times, pass_args=True))
 
     updater.start_polling()
     updater.idle()
