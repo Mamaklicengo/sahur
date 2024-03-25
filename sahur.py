@@ -7,27 +7,24 @@ from requests import get
 
 from telegram.ext import Updater, CommandHandler
 
-# Sadece Adana şehrini ekliyoruz, diğer şehirleri istediğiniz gibi ekleyebilirsiniz
-sehirler = ['01 Adana 9146']
+sehirler = {
+    'Adana': '9146',
+    'Adıyaman': '9158',
+    'Afyonkarahisar': '9167',
+    'Ağrı': '9185',
+    'Amasya': '9198',
+    # Diğer şehirleri buraya ekleyebilirsiniz
+}
 
-# Diyanet Namaz Vakitleri web sitesinden şehre göre namaz vakitlerini al
 def get_prayer_times(city):
     url = f"https://namazvakitleri.diyanet.gov.tr/tr-TR/{city}"
     response = get(url)
     if response.status_code == 200:
         return response.content
-    else:
-        return None
 
-# Şehir adına göre il kodunu bul
 def find_location(city):
-    city = city.lower().capitalize()  # Büyük harfle başlat
-    for item in sehirler:
-        if city in item:
-            return item.split()[0]  # İl kodunu döndür
-    return None
+    return sehirler.get(city.capitalize())
 
-# Namaz vakitlerini ve sahur, iftar saatlerini göster
 def show_prayer_times(update, context):
     if len(context.args) < 2:
         update.message.reply_text("Lütfen bir şehir adı ve komutu belirtin. Örneğin: /namaz istanbul")
@@ -96,7 +93,6 @@ def show_prayer_times(update, context):
 
     update.message.reply_text(message)
 
-# Botu başlat
 def main():
     updater = Updater("6704245576:AAGqYQrMMuH2yt2sHJ9Zhk7q2wtNrDA_Eow", use_context=True)
     dp = updater.dispatcher
