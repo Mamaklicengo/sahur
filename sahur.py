@@ -66,7 +66,7 @@ async def remaining_time(city_id: int, prayer_type: str):
     else:
         return f"{prayer_time} ({hours_left} saat {minutes_left} dakika kaldı)"
 
-app = Client("bot_adiniz", bot_token="6704245576:AAGqYQrMMuH2yt2sHJ9Zhk7q2wtNrDA_Eow")
+app = Client("Ramazan", bot_token="6704245576:AAGqYQrMMuH2yt2sHJ9Zhk7q2wtNrDA_Eow")
 
 @app.on_message(filters.command(["iftar"]))
 async def iftar_handler(_, message):
