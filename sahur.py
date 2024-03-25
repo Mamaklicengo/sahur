@@ -7,67 +7,62 @@ from requests import get
 
 from telegram.ext import Updater, CommandHandler
 
-sehirler = {
-    'Adana': '9146',
-    'Adıyaman': '9158',
-    'Afyonkarahisar': '9167',
-    'Ağrı': '9185',
-    'Amasya': '9198',
-    # Diğer şehirleri buraya ekleyebilirsiniz
-}
-
-def get_prayer_times(city):
-    url = f"https://namazvakitleri.diyanet.gov.tr/tr-TR/{city}"
+def get_prayer_times(city_id):
+    url = f"https://namazvakitleri.diyanet.gov.tr/tr-TR/{city_id}"
     response = get(url)
     if response.status_code == 200:
         return response.content
 
-def find_location(city):
-    return sehirler.get(city.capitalize())
+def find_city_id(city):
+    sehirler = {
+        'adana': '9146',
+        'adıyaman': '9158',
+        'afyonkarahisar': '9167',
+        'ağrı': '9185',
+        'amasya': '9198',
+        # Diğer şehirleri buraya ekleyebilirsiniz
+    }
+    return sehirler.get(city.lower())
 
 def show_prayer_times(update, context):
-    if len(context.args) < 1:
-        update.message.reply_text("Lütfen bir şehir adı belirtin. Örneğin: /sahur adana")
+    if len(context.args) < 2:
+        update.message.reply_text("Lütfen bir şehir adı ve komutu belirtin. Örneğin: /iftar adana")
         return
 
     city = context.args[0]
-    if city.lower() not in sehirler:
+    city_id = find_city_id(city)
+    if not city_id:
         update.message.reply_text("Belirtilen şehir bulunamadı.")
         return
 
-    location_code = sehirler[city.lower()]
-    prayer_times = get_prayer_times(location_code)
+    command = context.args[1].lower()
+    if command not in ['sahur', 'iftar']:
+        update.message.reply_text("Geçersiz komut. Lütfen 'sahur' veya 'iftar' komutlarını kullanın.")
+        return
+
+    prayer_times = get_prayer_times(city_id)
     if not prayer_times:
         update.message.reply_text("Namaz vakitleri alınamadı. Lütfen daha sonra tekrar deneyin.")
         return
 
-    soup = BeautifulSoup(prayer_times, "html.parser")
-    prayer_table = soup.find("table", {"class": "table m-0"})
+    soup = BeautifulSoup(prayer_times, 'html.parser')
+    prayer_table = soup.find('table', {'class': 'table m-0'})
 
     if not prayer_table:
         update.message.reply_text("Namaz vakitleri bulunamadı. Lütfen daha sonra tekrar deneyin.")
         return
 
-    rows = prayer_table.find_all("tr")
+    rows = prayer_table.find_all('tr')
     times = {}
 
     for row in rows:
-        columns = row.find_all("td")
+        columns = row.find_all('td')
         if columns:
             vakit = columns[0].text.strip()
             saat = columns[1].text.strip()
             times[vakit] = saat
 
-    if context.args[1].lower() == "sahur":
-        target_time = times.get("Sahur")
-        command = "sahur"
-    elif context.args[1].lower() == "iftar":
-        target_time = times.get("İftar")
-        command = "iftar"
-    else:
-        update.message.reply_text("Geçersiz komut. Lütfen 'sahur' veya 'iftar' komutlarını kullanın.")
-        return
-
+    target_time = times.get('Sahur' if command == 'sahur' else 'İftar')
     if not target_time:
         update.message.reply_text(f"{city.capitalize()} için {command} vakiti bulunamadı.")
         return
@@ -89,8 +84,8 @@ def show_prayer_times(update, context):
 def main():
     updater = Updater("6704245576:AAGqYQrMMuH2yt2sHJ9Zhk7q2wtNrDA_Eow", use_context=True)
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler("sahur", show_prayer_times, pass_args=True))
     dp.add_handler(CommandHandler("iftar", show_prayer_times, pass_args=True))
+    dp.add_handler(CommandHandler("sahur", show_prayer_times, pass_args=True))
 
     updater.start_polling()
     updater.idle()
